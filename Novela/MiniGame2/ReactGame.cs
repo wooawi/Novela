@@ -53,9 +53,16 @@ namespace project
             else
             {
                 timer1.Stop();
-
-                if (rt.result) { MessageBox.Show("        |Замок открыт|     "); }
-                else { MessageBox.Show("          |Замок заблокирован.|\n|Повторите попытку через 5 минут.|"); }
+                if (rt.result)
+                {
+                    MessageBox.Show("        |Замок открыт|     ");
+                    this.DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    MessageBox.Show("          |Замок заблокирован.|\n|Повторите попытку через 5 минут.|");
+                    this.DialogResult = DialogResult.Cancel;
+                }
                 this.Close();
             }
         }

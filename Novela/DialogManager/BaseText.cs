@@ -13,11 +13,9 @@ namespace project.DialogMnager
         public class BaseText
         {
             private DialogueManager dm = new DialogueManager();
+            public int Z46Index { get; private set; } = -1;
 
-            public List<DialogueLine> GetDialog(int a)
-            {
-                return dm.GetDialog(a);
-            }
+            public List<DialogueLine> GetDialog(int a) => dm.GetDialog(a);
             public BaseText()
             {
                 DialogueLine a1 = new DialogueLine("Автор", "ХАНТАВИРУС: ЧЕРНОБЫЛЬСКАЯ ПЕТЛЯ", 0, 6); dm.AddText(a1, 0);
@@ -218,6 +216,7 @@ namespace project.DialogMnager
                 DialogueLine qq1 = new DialogueLine("Фалекс", "Часы — только ключ. Вам нужен второй артефакт, он в шахте под четвёртым блоком. \nБез него вы застрянете здесь навсегда.", 29, 3); dm.AddText(qq1, 5);
                 DialogueLine qqq1 = new DialogueLine("Фалекс", "Я хотел вернуть её. Одну. А получилось, что ставлю под угрозу всех. \nТеперь я не знаю, как остановиться.", 33, 3); dm.AddText(qqq1, 6);
                 DialogueLine qqqq1 = new DialogueLine("Фалекс", "Часы сами выбрали вас. Или время. Или Бог — не знаю. \nНо вы — единственные, кто может замкнуть петлю. Или разорвать её", 31, 3); dm.AddText(qqqq1, 7);
+                Z46Index = dm.GetDialog(3).Count;
                 DialogueLine z46 = new DialogueLine("Автор", "Фалекс замолчал, опустил пробирку на стол и посмотрел на них в упор. \nУсталый, злой, но не безумный — это почему-то пугало больше всего.", 0, 3); dm.AddText(z46, 3);
                 DialogueLine z47 = new DialogueLine("Фалекс", "Я ответил на ваши вопросы. Теперь мой черёд.\n Завтра здесь всё рухнет. Реактор, город, надежда. Я пытаюсь это остановить, \nно один не справлюсь. Мне нужны руки, глаза, время. \nТо, чего у меня больше нет.", 35, 3); dm.AddText(z47, 3);
                 DialogueLine z48 = new DialogueLine("Автор", "Пауза. В подвале было слышно, как потрескивает одна из свечей на столе.", 0, 3); dm.AddText(z48, 3);
@@ -523,15 +522,24 @@ namespace project.DialogMnager
                 DialogueLine endG27 = new DialogueLine("Автор", "Они сидели на траве, смотрели на чистое небо и не могли поверить. Всё закончилось. \nМиссия выполнена. Они спасли не только себя — спасли мир.", 0, 6); dm.AddText(endG27, 12);
                 DialogueLine endG28 = new DialogueLine("Диана", "С возвращением, команда.", 12, 6); dm.AddText(endG28, 12);
                 DialogueLine endG29 = new DialogueLine("Автор", "И они засмеялись. Все вместе.\n Эпилог.\n2067 год. Чернобыль процветает. Аварии не было. Вируса не существует. \nЛюди живут, работают, радуются жизни.\nЭмма, Диана, Роня, Динара и Фалекс стали лучшей командой \nИнститута времени. Их отправили в новую командировку — в другой век, на другую миссию.\nНо это уже совсем другая история.", 0, 6); dm.AddText(endG29, 12);
-
+                a88.ChoiceScene = 0;   // повернуть стрелки часов или отказаться
+                b26.ChoiceScene = 1;   // остаться с пациентом / идти всем
+                z45.ChoiceScene = 2;   // какой вопрос задать Фалексу
+                z49.ChoiceScene = 3;   // соглашаться помогать или нет
+                c19.ChoiceScene = 4;   // бежать или отстреливаться (склад)
+                endD17.MiniGameId = 1;
             }
         }
+       
         public class DialogueLine
         {
             public string Name { get; set; }
             public string Text { get; set; }
             public int indIm { get; set; }
             public int intImB { get; set; }
+
+            public int ChoiceScene { get; set; } = -1;
+            public int MiniGameId { get; set; } = -1;
 
             public DialogueLine(string name, string text, int imageIndex, int backgroundIndex)
             {
@@ -540,7 +548,6 @@ namespace project.DialogMnager
                 indIm = imageIndex;
                 intImB = backgroundIndex;
             }
-
         }
         public class DialogueManager
         {

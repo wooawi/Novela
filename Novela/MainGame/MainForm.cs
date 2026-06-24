@@ -1,6 +1,7 @@
 using project.Choices;
 using project.DialogMnager.бурмаджа_.dialogue;
 using project.EndingManager.EndingUsee;
+using project.MiniGame3;
 using project.MiniGame3.HelpClass;
 using project.MiniGame3.Skip;
 using System;
@@ -38,7 +39,33 @@ namespace project
         EndingUse eu = new EndingUse();
 
         private int activeSaveSlot = 1;
+        private bool isChoiceActive = false;
 
+
+        private readonly Dictionary<string, int> choiceTargetList = new()
+        {
+            { "a1", 1 },     // повернула стрелки -> список 1 (b...)
+            { "b1", 10 },    // отказалась -> список 10 (lineB...)
+
+            { "puzzle", 3 }, // все идут в церковь -> список 3 (z...)
+
+            { "agree", 8 },  // согласиться помогать Фалексу -> список 8 (c...)
+            { "endR", 9 },   // отказаться -> список 9 (dEndR...)
+
+            { "lineB", 11 }, // -> список 11 (endD...)
+            { "endG", 12 },  // -> список 12 (endG...)
+        };
+
+        private readonly Dictionary<string, int> questionAnswerList = new()
+        {
+            { "q1", 4 },
+            { "q2", 5 },
+            { "q3", 6 },
+            { "q4", 7 },
+        };
+
+        private int returnListIndex = -1;
+        private int returnLineIndex = -1;
 
         private void ToggleAutoSkip()
         {
@@ -76,7 +103,6 @@ namespace project
             }
 
             skipStepRequested = true;
-
             ProcessSkipStep();
         }
 
@@ -90,7 +116,6 @@ namespace project
         private void ProcessSkipStep()
         {
             if (!skipStepRequested) return;
-
             skipStepRequested = false;
 
             if (panel2.Visible)
@@ -112,7 +137,8 @@ namespace project
         {
             InitializeComponent();
             LoadImagesToList();
-
+            panel2.BringToFront();
+            panel1.BringToFront();
             panel1.Parent = pictureBox1;
             label1.Parent = pictureBox1;
             pictureBox2.Parent = pictureBox1;
@@ -136,9 +162,9 @@ namespace project
             skipTimer.Interval = 90;
             skipTimer.Tick += SkipTimer_Tick;
 
-            button3.Click += (s, e) => HandleChoiceButton(0);
+            button3.Click += (s, e) => HandleChoiceButton(2);
             button4.Click += (s, e) => HandleChoiceButton(1);
-            button5.Click += (s, e) => HandleChoiceButton(2);
+            button5.Click += (s, e) => HandleChoiceButton(0);
 
             button6.Text = "💾 Слот 1";
             button7.Text = "💾 Слот 2";
@@ -148,6 +174,7 @@ namespace project
 
             timer1.Start();
             this.Select();
+            
         }
 
         private void button6_Click(object sender, EventArgs e) => ToggleSaveLoad(1);
@@ -156,15 +183,10 @@ namespace project
 
         private void ToggleSaveLoad(int slot)
         {
-            if (SaveSystem.Exists(slot))
-            {
-                QuickLoad(slot);
-            }
-            else
-            {
-                QuickSave(slot);
-            }
+            if (SaveSystem.Exists(slot)) QuickLoad(slot);
+            else QuickSave(slot);
         }
+
         private void button6_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right) QuickLoad(1);
@@ -177,8 +199,6 @@ namespace project
         {
             if (e.Button == MouseButtons.Right) QuickLoad(3);
         }
-
-       
 
         private void MainFormGame_Shown(object sender, EventArgs e)
         {
@@ -256,6 +276,7 @@ namespace project
             panel1.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
+            panel2.Visible = false;
 
             ShowNextDialog();
             return true;
@@ -263,7 +284,7 @@ namespace project
 
         private void ShowSaveToast()
         {
-            var lbl = new Label
+            var l = new Label
             {
                 Text = "✔ Сохранено",
                 ForeColor = Color.LimeGreen,
@@ -272,11 +293,11 @@ namespace project
                 AutoSize = true,
                 Location = new Point(10, 10)
             };
-            tabPage1.Controls.Add(lbl);
-            lbl.BringToFront();
+            tabPage1.Controls.Add(l);
+            l.BringToFront();
 
             var t = new System.Windows.Forms.Timer { Interval = 2000 };
-            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(lbl); lbl.Dispose(); };
+            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
         }
 
@@ -305,6 +326,7 @@ namespace project
                 MessageBox.Show($"Сохранение в слоте {slot} не существует!", "Ошибка загрузки");
             }
         }
+
         private void UpdateSaveButtonsDisplay()
         {
             button6.BackColor = activeSaveSlot == 1 ? Color.LimeGreen : SystemColors.Control;
@@ -314,7 +336,7 @@ namespace project
 
         private void ShowQuickSaveToast(int slot)
         {
-            var lbl = new Label
+            var l = new Label
             {
                 Text = $"✔ Сохранено в слот {slot}",
                 ForeColor = Color.LimeGreen,
@@ -323,16 +345,17 @@ namespace project
                 AutoSize = true,
                 Location = new Point(10, 40)
             };
-            tabPage1.Controls.Add(lbl);
-            lbl.BringToFront();
+            tabPage1.Controls.Add(l);
+            l.BringToFront();
 
             var t = new System.Windows.Forms.Timer { Interval = 1500 };
-            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(lbl); lbl.Dispose(); };
+            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
         }
+
         private void ShowQuickLoadToast(int slot)
         {
-            var lbl = new Label
+            var l = new Label
             {
                 Text = $"⟳ Загружено из слота {slot}",
                 ForeColor = Color.DeepSkyBlue,
@@ -341,11 +364,11 @@ namespace project
                 AutoSize = true,
                 Location = new Point(10, 40)
             };
-            tabPage1.Controls.Add(lbl);
-            lbl.BringToFront();
+            tabPage1.Controls.Add(l);
+            l.BringToFront();
 
             var t = new System.Windows.Forms.Timer { Interval = 1500 };
-            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(lbl); lbl.Dispose(); };
+            t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
         }
 
@@ -360,6 +383,23 @@ namespace project
             panel1.Visible = true;
             label1.Visible = true;
             label2.Visible = true;
+            pictureBox2.Visible = true;
+            panel2.Visible = false;
+
+            ShowNextDialog();
+        }
+        private void GoToDialogList(int index, int startLineIndex)
+        {
+            currentDialogListIndex = index;
+            currentDialogList = bt.GetDialog(index);
+            currentDialogIndex = Math.Max(startLineIndex, 0);
+            isDialogPlaying = true;
+            isWaitingForEnter = false;
+
+            panel1.Visible = true;
+            label1.Visible = true;
+            label2.Visible = true;
+            pictureBox2.Visible = true;
             panel2.Visible = false;
 
             ShowNextDialog();
@@ -369,26 +409,37 @@ namespace project
         {
             isAutoSkipping = false;
             label4.Text = ">";
+            panel2.Visible = true;
+            panel2.BringToFront();
             var choices = choiceManager.GetChoices(sceneIndex);
             if (choices.Count == 0) return;
 
             pendingChoiceSceneIndex = sceneIndex;
+            isChoiceActive = true;
 
             button5.Text = choices.Count > 0 ? choices[0].Text : "";
-            button5.Visible = choices.Count > 0;
             button4.Text = choices.Count > 1 ? choices[1].Text : "";
-            button4.Visible = choices.Count > 1;
             button3.Text = choices.Count > 2 ? choices[2].Text : "";
+
+            button5.Visible = choices.Count > 0;
+            button4.Visible = choices.Count > 1;
             button3.Visible = choices.Count > 2;
 
             panel1.Visible = false;
             label1.Visible = false;
             pictureBox2.Visible = false;
             panel2.Visible = true;
+            button3.Enabled = true;
+            button4.Enabled = true;
+            button5.Enabled = true;
         }
 
         private void HandleChoiceButton(int buttonIndex)
         {
+            if (!isChoiceActive) return;
+            button3.Enabled = false;
+            button4.Enabled = false;
+            button5.Enabled = false;
             if (pendingChoiceSceneIndex < 0) return;
 
             var choices = choiceManager.GetChoices(pendingChoiceSceneIndex);
@@ -397,14 +448,58 @@ namespace project
             var chosen = choices[buttonIndex];
             choiceManager.SetChoice(chosen.IdTyping);
 
+            isChoiceActive = false;
+            pendingChoiceSceneIndex = -1;
+
+            panel2.Visible = false;
+
+            // 💾 save выбор
             var saveData = SaveSystem.Load(activeSaveSlot) ?? new Save();
             saveData.ChoicesMade.Add(chosen.IdTyping);
             SaveSystem.SaveToSlot(saveData, activeSaveSlot);
 
-            panel2.Visible = false;
-            pendingChoiceSceneIndex = -1;
+            // 🔥 1. мини-игра
+            if (chosen.IdTyping == "puzzle")
+            {
+                StartMiniGame(1);
+                return;
+            }
 
-            string result = choiceManager.GetResult();
+            if (chosen.IdTyping == "agree")
+            {
+                StartMiniGame(2);
+                return;
+            }
+
+            if (chosen.IdTyping == "lineB")
+            {
+                StartMiniGame(3);
+                return;
+            }
+
+            // 💀 концовка
+            if (chosen.IdTyping == "endF")
+            {
+                new SavingGame().ShowDialog();
+                GoToDialogList(2);
+                return;
+            }
+
+            // 🔁 переходы
+            if (questionAnswerList.TryGetValue(chosen.IdTyping, out int answerList))
+            {
+                GoToDialogList(answerList);
+                return;
+            }
+
+            if (choiceTargetList.TryGetValue(chosen.IdTyping, out int targetList))
+            {
+                GoToDialogList(targetList);
+                return;
+            }
+
+            // fallback
+            ShowNextDialog();
         }
 
         private void LoadImagesToList()
@@ -486,10 +581,57 @@ namespace project
                 isWaitingForEnter = true;
                 return;
             }
-            if (isWaitingForEnter)
+
+            if (!isWaitingForEnter) return;
+            isWaitingForEnter = false;
+
+            if (currentDialogIndex > 0 && currentDialogIndex <= currentDialogList.Count)
             {
-                isWaitingForEnter = false;
-                ShowNextDialog();
+                var justShown = currentDialogList[currentDialogIndex - 1];
+
+                if (justShown.ChoiceScene >= 0)
+                {
+                    ShowChoices(justShown.ChoiceScene);
+                    return;
+                }
+                if (justShown.MiniGameId >= 0)
+                {
+                    StartMiniGame(justShown.MiniGameId);
+                    return;
+                }
+            }
+
+            ShowNextDialog();
+        }
+
+        private void StartMiniGame(int id)
+        {
+            Form miniGame = null;
+
+            switch (id)
+            {
+                case 1:
+                    miniGame = new ReactGame();
+                    break;
+
+                case 2:
+                    miniGame = new SavingGame();
+                    break;
+
+                case 3:
+                    miniGame = new ChoicesMiniGameForm();
+                    break;
+            }
+
+            if (miniGame != null)
+            {
+                var result = miniGame.ShowDialog();
+
+                // после мини-игры возвращаемся
+                if (result == DialogResult.OK)
+                {
+                    ShowNextDialog();
+                }
             }
         }
 
@@ -542,6 +684,15 @@ namespace project
             }
             else
             {
+                if (returnListIndex >= 0)
+                {
+                    int rl = returnListIndex, ri = returnLineIndex;
+                    returnListIndex = -1;
+                    returnLineIndex = -1;
+                    GoToDialogList(rl, ri);
+                    return;
+                }
+
                 panel1.Visible = false;
                 label1.Visible = false;
                 pictureBox2.Visible = false;
@@ -565,5 +716,9 @@ namespace project
             eu.Unlocking(a);
             SaveGame(activeSaveSlot);
         }
+
+        
+
+
     }
 }
