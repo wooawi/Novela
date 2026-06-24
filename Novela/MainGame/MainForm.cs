@@ -12,7 +12,7 @@ namespace project
 {
     public partial class MainFormGame : Form
     {
-       
+        
         private SkipDialogs skipd = new SkipDialogs();
         private BaseText bt = new BaseText();
         private List<DialogueLine> currentDialogList;

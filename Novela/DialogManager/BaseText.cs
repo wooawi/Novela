@@ -546,15 +546,16 @@ namespace project.DialogMnager
         {
             private List<string> history = new List<string>();
             private List<List<DialogueLine>> listOfLists = new List<List<DialogueLine>>();
+
             public void AddText(DialogueLine line, int a)
             {
-                if (listOfLists.Count - 1 < a)
+                while (listOfLists.Count <= a)
                 {
                     listOfLists.Add(new List<DialogueLine>());
                 }
                 listOfLists[a].Add(line);
             }
-
+            
             public List<DialogueLine> GetDialog(int a)
             {
                 return listOfLists[a];
