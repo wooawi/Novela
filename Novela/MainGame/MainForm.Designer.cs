@@ -30,8 +30,18 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFormGame));
-            tabControl1 = new TabControl();
+            timer1 = new System.Windows.Forms.Timer(components);
+            tabPage3 = new TabPage();
+            label3 = new Label();
+            richTextBox1 = new RichTextBox();
+            tabPage2 = new TabPage();
+            EndingsLabel2 = new Label();
+            button2 = new Button();
+            button1 = new Button();
+            EndingsLabel1 = new Label();
+            pictureBoxEndings = new PictureBox();
             tabPage1 = new TabPage();
+            label4 = new Label();
             label1 = new Label();
             panel1 = new Panel();
             label2 = new Label();
@@ -41,43 +51,155 @@
             button4 = new Button();
             button5 = new Button();
             pictureBox1 = new PictureBox();
-            tabPage2 = new TabPage();
-            EndingsLabel2 = new Label();
-            button2 = new Button();
-            button1 = new Button();
-            EndingsLabel1 = new Label();
-            pictureBoxEndings = new PictureBox();
-            tabPage3 = new TabPage();
-            label3 = new Label();
-            richTextBox1 = new RichTextBox();
-            timer1 = new System.Windows.Forms.Timer(components);
-            tabControl1.SuspendLayout();
+            tabControl1 = new TabControl();
+            tabPage4 = new TabPage();
+            button8 = new Button();
+            button7 = new Button();
+            button6 = new Button();
+            tabPage3.SuspendLayout();
+            tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).BeginInit();
             tabPage1.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).BeginInit();
-            tabPage3.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage4.SuspendLayout();
             SuspendLayout();
             // 
-            // tabControl1
+            // tabPage3
             // 
-            tabControl1.Controls.Add(tabPage1);
-            tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 0);
-            tabControl1.Margin = new Padding(2);
-            tabControl1.Name = "tabControl1";
-            tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(930, 532);
-            tabControl1.TabIndex = 0;
+            tabPage3.AutoScroll = true;
+            tabPage3.BackgroundImage = Properties.Resources.HistoryBackground;
+            tabPage3.BackgroundImageLayout = ImageLayout.Stretch;
+            tabPage3.Controls.Add(label3);
+            tabPage3.Controls.Add(richTextBox1);
+            tabPage3.ForeColor = Color.Black;
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Margin = new Padding(2);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Size = new Size(922, 504);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "История";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.BackColor = Color.FromArgb(20, 20, 20);
+            label3.Font = new Font("Microsoft Sans Serif", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = SystemColors.ButtonFace;
+            label3.Image = (Image)resources.GetObject("label3.Image");
+            label3.Location = new Point(298, 4);
+            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(284, 46);
+            label3.TabIndex = 3;
+            label3.Text = "| UCTOPUYA |";
+            // 
+            // richTextBox1
+            // 
+            richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            richTextBox1.BackColor = Color.FromArgb(20, 20, 20);
+            richTextBox1.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            richTextBox1.ForeColor = Color.White;
+            richTextBox1.Location = new Point(54, 52);
+            richTextBox1.Margin = new Padding(2);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(824, 443);
+            richTextBox1.TabIndex = 1;
+            richTextBox1.Text = "";
+            // 
+            // tabPage2
+            // 
+            tabPage2.BackColor = Color.Black;
+            tabPage2.Controls.Add(EndingsLabel2);
+            tabPage2.Controls.Add(button2);
+            tabPage2.Controls.Add(button1);
+            tabPage2.Controls.Add(EndingsLabel1);
+            tabPage2.Controls.Add(pictureBoxEndings);
+            tabPage2.Font = new Font("Segoe UI", 15F);
+            tabPage2.ForeColor = Color.White;
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Margin = new Padding(2);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Size = new Size(922, 504);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Концовки";
+            // 
+            // EndingsLabel2
+            // 
+            EndingsLabel2.BackColor = Color.Transparent;
+            EndingsLabel2.Font = new Font("SimSun-ExtG", 20F, FontStyle.Bold);
+            EndingsLabel2.ForeColor = SystemColors.ButtonHighlight;
+            EndingsLabel2.Image = (Image)resources.GetObject("EndingsLabel2.Image");
+            EndingsLabel2.Location = new Point(187, 115);
+            EndingsLabel2.Margin = new Padding(2, 0, 2, 0);
+            EndingsLabel2.Name = "EndingsLabel2";
+            EndingsLabel2.Size = new Size(449, 371);
+            EndingsLabel2.TabIndex = 4;
+            // 
+            // button2
+            // 
+            button2.Font = new Font("Tahoma", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button2.ForeColor = SystemColors.ButtonHighlight;
+            button2.Image = (Image)resources.GetObject("button2.Image");
+            button2.Location = new Point(482, 61);
+            button2.Margin = new Padding(2);
+            button2.Name = "button2";
+            button2.Size = new Size(153, 34);
+            button2.TabIndex = 3;
+            button2.Text = "ОТКРЫТЫЕ";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // button1
+            // 
+            button1.Font = new Font("Tahoma", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button1.ForeColor = SystemColors.ButtonHighlight;
+            button1.Image = (Image)resources.GetObject("button1.Image");
+            button1.Location = new Point(187, 61);
+            button1.Margin = new Padding(2);
+            button1.Name = "button1";
+            button1.Size = new Size(153, 34);
+            button1.TabIndex = 2;
+            button1.Text = "ВСЕ";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // EndingsLabel1
+            // 
+            EndingsLabel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            EndingsLabel1.AutoSize = true;
+            EndingsLabel1.Font = new Font("Microsoft Sans Serif", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            EndingsLabel1.ForeColor = SystemColors.ButtonFace;
+            EndingsLabel1.Image = (Image)resources.GetObject("EndingsLabel1.Image");
+            EndingsLabel1.Location = new Point(284, 13);
+            EndingsLabel1.Margin = new Padding(2, 0, 2, 0);
+            EndingsLabel1.Name = "EndingsLabel1";
+            EndingsLabel1.Size = new Size(290, 46);
+            EndingsLabel1.TabIndex = 1;
+            EndingsLabel1.Text = "| KOHCOBKU |";
+            // 
+            // pictureBoxEndings
+            // 
+            pictureBoxEndings.BackColor = Color.Transparent;
+            pictureBoxEndings.Dock = DockStyle.Fill;
+            pictureBoxEndings.Image = (Image)resources.GetObject("pictureBoxEndings.Image");
+            pictureBoxEndings.Location = new Point(0, 0);
+            pictureBoxEndings.Margin = new Padding(2);
+            pictureBoxEndings.Name = "pictureBoxEndings";
+            pictureBoxEndings.Size = new Size(922, 504);
+            pictureBoxEndings.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxEndings.TabIndex = 0;
+            pictureBoxEndings.TabStop = false;
             // 
             // tabPage1
             // 
             tabPage1.BackColor = Color.Black;
+            tabPage1.Controls.Add(label4);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(panel1);
             tabPage1.Controls.Add(pictureBox2);
@@ -93,6 +215,21 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Игра";
             // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label4.BackColor = Color.Black;
+            label4.BorderStyle = BorderStyle.Fixed3D;
+            label4.Font = new Font("Times New Roman", 15F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.White;
+            label4.Location = new Point(14, 337);
+            label4.Margin = new Padding(2, 0, 2, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(39, 31);
+            label4.TabIndex = 13;
+            label4.Text = ">";
+            label4.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // label1
             // 
             label1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
@@ -100,7 +237,7 @@
             label1.BorderStyle = BorderStyle.Fixed3D;
             label1.Font = new Font("Times New Roman", 15F, FontStyle.Italic, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(14, 337);
+            label1.Location = new Point(57, 337);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
             label1.Size = new Size(130, 31);
@@ -202,130 +339,71 @@
             pictureBox1.TabIndex = 8;
             pictureBox1.TabStop = false;
             // 
-            // tabPage2
+            // tabControl1
             // 
-            tabPage2.BackColor = Color.Black;
-            tabPage2.Controls.Add(EndingsLabel2);
-            tabPage2.Controls.Add(button2);
-            tabPage2.Controls.Add(button1);
-            tabPage2.Controls.Add(EndingsLabel1);
-            tabPage2.Controls.Add(pictureBoxEndings);
-            tabPage2.Font = new Font("Segoe UI", 15F);
-            tabPage2.ForeColor = Color.White;
-            tabPage2.Location = new Point(4, 24);
-            tabPage2.Margin = new Padding(2);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Size = new Size(922, 504);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Концовки";
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage3);
+            tabControl1.Controls.Add(tabPage4);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(0, 0);
+            tabControl1.Margin = new Padding(2);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(930, 532);
+            tabControl1.TabIndex = 0;
             // 
-            // EndingsLabel2
+            // tabPage4
             // 
-            EndingsLabel2.BackColor = Color.Transparent;
-            EndingsLabel2.Font = new Font("SimSun-ExtG", 20F, FontStyle.Bold);
-            EndingsLabel2.ForeColor = SystemColors.ButtonHighlight;
-            EndingsLabel2.Image = (Image)resources.GetObject("EndingsLabel2.Image");
-            EndingsLabel2.Location = new Point(187, 115);
-            EndingsLabel2.Margin = new Padding(2, 0, 2, 0);
-            EndingsLabel2.Name = "EndingsLabel2";
-            EndingsLabel2.Size = new Size(449, 371);
-            EndingsLabel2.TabIndex = 4;
+            tabPage4.BackColor = Color.Black;
+            tabPage4.Controls.Add(button8);
+            tabPage4.Controls.Add(button7);
+            tabPage4.Controls.Add(button6);
+            tabPage4.Location = new Point(4, 24);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(922, 504);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "tabPage4";
             // 
-            // button2
+            // button8
             // 
-            button2.Font = new Font("Tahoma", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button2.ForeColor = SystemColors.ButtonHighlight;
-            button2.Image = (Image)resources.GetObject("button2.Image");
-            button2.Location = new Point(482, 61);
-            button2.Margin = new Padding(2);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 34);
-            button2.TabIndex = 3;
-            button2.Text = "ОТКРЫТЫЕ";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            button8.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            button8.BackColor = Color.DarkGray;
+            button8.Location = new Point(19, 347);
+            button8.Name = "button8";
+            button8.Size = new Size(882, 132);
+            button8.TabIndex = 2;
+            button8.Text = "Слот 3";
+            button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
+            button8.MouseDown += button8_MouseDown;
             // 
-            // button1
+            // button7
             // 
-            button1.Font = new Font("Tahoma", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button1.ForeColor = SystemColors.ButtonHighlight;
-            button1.Image = (Image)resources.GetObject("button1.Image");
-            button1.Location = new Point(187, 61);
-            button1.Margin = new Padding(2);
-            button1.Name = "button1";
-            button1.Size = new Size(153, 34);
-            button1.TabIndex = 2;
-            button1.Text = "ВСЕ";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            button7.BackColor = Color.DarkGray;
+            button7.Location = new Point(19, 196);
+            button7.Name = "button7";
+            button7.Size = new Size(882, 126);
+            button7.TabIndex = 1;
+            button7.Text = "Слот 2";
+            button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
+            button7.MouseDown += button7_MouseDown;
             // 
-            // EndingsLabel1
+            // button6
             // 
-            EndingsLabel1.AutoSize = true;
-            EndingsLabel1.Font = new Font("Microsoft Sans Serif", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            EndingsLabel1.ForeColor = SystemColors.ButtonFace;
-            EndingsLabel1.Image = (Image)resources.GetObject("EndingsLabel1.Image");
-            EndingsLabel1.Location = new Point(279, 13);
-            EndingsLabel1.Margin = new Padding(2, 0, 2, 0);
-            EndingsLabel1.Name = "EndingsLabel1";
-            EndingsLabel1.Size = new Size(290, 46);
-            EndingsLabel1.TabIndex = 1;
-            EndingsLabel1.Text = "| KOHCOBKU |";
-            // 
-            // pictureBoxEndings
-            // 
-            pictureBoxEndings.BackColor = Color.Transparent;
-            pictureBoxEndings.Dock = DockStyle.Fill;
-            pictureBoxEndings.Image = (Image)resources.GetObject("pictureBoxEndings.Image");
-            pictureBoxEndings.Location = new Point(0, 0);
-            pictureBoxEndings.Margin = new Padding(2);
-            pictureBoxEndings.Name = "pictureBoxEndings";
-            pictureBoxEndings.Size = new Size(922, 504);
-            pictureBoxEndings.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBoxEndings.TabIndex = 0;
-            pictureBoxEndings.TabStop = false;
-            // 
-            // tabPage3
-            // 
-            tabPage3.AutoScroll = true;
-            tabPage3.BackgroundImage = Properties.Resources.HistoryBackground;
-            tabPage3.BackgroundImageLayout = ImageLayout.Stretch;
-            tabPage3.Controls.Add(label3);
-            tabPage3.Controls.Add(richTextBox1);
-            tabPage3.ForeColor = Color.Black;
-            tabPage3.Location = new Point(4, 24);
-            tabPage3.Margin = new Padding(2);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(922, 504);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "История";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.FromArgb(20, 20, 20);
-            label3.Font = new Font("Microsoft Sans Serif", 30F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.ForeColor = SystemColors.ButtonFace;
-            label3.Image = (Image)resources.GetObject("label3.Image");
-            label3.Location = new Point(298, 4);
-            label3.Margin = new Padding(2, 0, 2, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(284, 46);
-            label3.TabIndex = 3;
-            label3.Text = "| UCTOPUYA |";
-            // 
-            // richTextBox1
-            // 
-            richTextBox1.BackColor = Color.FromArgb(20, 20, 20);
-            richTextBox1.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            richTextBox1.ForeColor = Color.White;
-            richTextBox1.Location = new Point(54, 52);
-            richTextBox1.Margin = new Padding(2);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(824, 443);
-            richTextBox1.TabIndex = 1;
-            richTextBox1.Text = "";
+            button6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            button6.BackColor = Color.DarkGray;
+            button6.Location = new Point(19, 37);
+            button6.Name = "button6";
+            button6.Size = new Size(882, 129);
+            button6.TabIndex = 0;
+            button6.Text = "Слот 1";
+            button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
+            button6.MouseDown += button6_MouseDown;
             // 
             // MainFormGame
             // 
@@ -340,42 +418,47 @@
             Text = "Game";
             Shown += MainFormGame_Shown;
             KeyDown += MainFormGame_KeyDown;
-            tabControl1.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).EndInit();
             tabPage1.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).EndInit();
-            tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPage4.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
-        private PictureBox pictureBoxEndings;
-        private Label EndingsLabel1;
-        private Button button1;
-        private Button button2;
-        private Label EndingsLabel2;
-        private PictureBox pictureBox1;
         private System.Windows.Forms.Timer timer1;
         private TabPage tabPage3;
-        private RichTextBox richTextBox1;
         private Label label3;
+        private RichTextBox richTextBox1;
+        private TabPage tabPage2;
+        private Label EndingsLabel2;
+        private Button button2;
+        private Button button1;
+        private Label EndingsLabel1;
+        private PictureBox pictureBoxEndings;
+        private TabPage tabPage1;
+        private Label label4;
+        private Label label1;
+        private Panel panel1;
+        private Label label2;
+        private PictureBox pictureBox2;
         private Panel panel2;
         private Button button3;
         private Button button4;
         private Button button5;
-        private PictureBox pictureBox2;
-        private Label label1;
-        private Panel panel1;
-        private Label label2;
+        private PictureBox pictureBox1;
+        private TabControl tabControl1;
+        private TabPage tabPage4;
+        private Button button8;
+        private Button button7;
+        private Button button6;
     }
 }

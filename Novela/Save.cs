@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Windows.Forms; 
 
 namespace project
 {
-
     public class Save
     {
         public int DialogListIndex { get; set; }
@@ -18,53 +18,47 @@ namespace project
         public DateTime SaveTime { get; set; }
     }
 
-    
     public static class SaveSystem
     {
-        private static readonly string SaveDirectory =
+        private static readonly string Dir =
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Saves");
 
-        private static readonly JsonSerializerOptions JsonOptions = new()
-        {
-            WriteIndented = true
-        };
+        private static string PathSlot(int slot)
+            => Path.Combine(Dir, $"save_{slot}.json");
 
-        private static string PathForSlot(int slot) =>
-            Path.Combine(SaveDirectory, $"save_{slot}.json");
-
-        private static void EnsureDirectory()
+        public static void Ensure()
         {
-            if (!Directory.Exists(SaveDirectory))
-                Directory.CreateDirectory(SaveDirectory);
+            if (!Directory.Exists(Dir))
+                Directory.CreateDirectory(Dir);
         }
 
         public static bool Exists(int slot)
-        {
-            return File.Exists(PathForSlot(slot));
-        }
+            => File.Exists(PathSlot(slot));
 
         public static bool SaveToSlot(Save data, int slot)
         {
             try
             {
-                EnsureDirectory();
+                Ensure();
                 data.SaveTime = DateTime.Now;
-                string json = JsonSerializer.Serialize(data, JsonOptions);
-                File.WriteAllText(PathForSlot(slot), json);
+                string json = JsonSerializer.Serialize(data, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                File.WriteAllText(PathSlot(slot), json);
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка сохранения (слот {slot}): {ex.Message}");
+                System.Windows.Forms.MessageBox.Show($"Ошибка сохранения: {ex.Message}");
                 return false;
             }
         }
 
         public static Save Load(int slot)
         {
-            string path = PathForSlot(slot);
+            string path = PathSlot(slot);
             if (!File.Exists(path)) return null;
-
             try
             {
                 string json = File.ReadAllText(path);
@@ -72,34 +66,9 @@ namespace project
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка загрузки (слот {slot}): {ex.Message}");
+                System.Windows.Forms.MessageBox.Show($"Ошибка загрузки: {ex.Message}");
                 return null;
             }
-        }
-
-        public static bool DeleteSave(int slot)
-        {
-            string path = PathForSlot(slot);
-            if (!File.Exists(path)) return false;
-            File.Delete(path);
-            return true;
-        }
-
-        public static List<int> GetSaves()
-        {
-            var slots = new List<int>();
-            if (!Directory.Exists(SaveDirectory)) return slots;
-
-            foreach (var file in Directory.GetFiles(SaveDirectory, "save_*.json"))
-            {
-                string name = Path.GetFileNameWithoutExtension(file); 
-                string numPart = name.Replace("save_", "");
-                if (int.TryParse(numPart, out int slot))
-                    slots.Add(slot);
-            }
-
-            slots.Sort();
-            return slots;
         }
     }
 }
