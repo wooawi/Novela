@@ -13,10 +13,11 @@ namespace project.EndingManager.EndingUsee
         private string EndingsName;
         private List<EndingsYo> endings = new List<EndingsYo>()
         {
-            new EndingsYo("Концовка А"),
-            new EndingsYo("Концовка В"),
-            new EndingsYo("Концовка Г"),
-            new EndingsYo("Концовка С")
+            new EndingsYo("Ложная надежда"),
+            new EndingsYo("Геноцид"),
+            new EndingsYo("Гости из будущего"),
+            new EndingsYo("Дьявол в деталях"),
+            new EndingsYo("Мир во всем мире")
         };
         private string textBe = "";
 

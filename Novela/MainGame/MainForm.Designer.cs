@@ -41,16 +41,17 @@
             EndingsLabel1 = new Label();
             pictureBoxEndings = new PictureBox();
             tabPage1 = new TabPage();
+            panel2 = new Panel();
+            button9 = new Button();
+            button3 = new Button();
+            button4 = new Button();
+            button5 = new Button();
             label4 = new Label();
             label1 = new Label();
             panel1 = new Panel();
             label2 = new Label();
-            pictureBox2 = new PictureBox();
-            panel2 = new Panel();
-            button3 = new Button();
-            button4 = new Button();
-            button5 = new Button();
             pictureBox1 = new PictureBox();
+            pictureBox2 = new PictureBox();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
             button8 = new Button();
@@ -60,10 +61,10 @@
             tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).BeginInit();
             tabPage1.SuspendLayout();
-            panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             panel2.SuspendLayout();
+            panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             SuspendLayout();
@@ -199,12 +200,12 @@
             // tabPage1
             // 
             tabPage1.BackColor = Color.Black;
+            tabPage1.Controls.Add(panel2);
             tabPage1.Controls.Add(label4);
             tabPage1.Controls.Add(label1);
             tabPage1.Controls.Add(panel1);
-            tabPage1.Controls.Add(pictureBox2);
-            tabPage1.Controls.Add(panel2);
             tabPage1.Controls.Add(pictureBox1);
+            tabPage1.Controls.Add(pictureBox2);
             tabPage1.Font = new Font("Segoe UI", 15F);
             tabPage1.ForeColor = Color.Black;
             tabPage1.Location = new Point(4, 24);
@@ -214,6 +215,67 @@
             tabPage1.Size = new Size(922, 504);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Игра";
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.Transparent;
+            panel2.Controls.Add(button9);
+            panel2.Controls.Add(button3);
+            panel2.Controls.Add(button4);
+            panel2.Controls.Add(button5);
+            panel2.Location = new Point(141, 58);
+            panel2.Margin = new Padding(2);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(635, 254);
+            panel2.TabIndex = 9;
+            // 
+            // button9
+            // 
+            button9.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button9.ForeColor = Color.White;
+            button9.Image = (Image)resources.GetObject("button9.Image");
+            button9.Location = new Point(16, 188);
+            button9.Margin = new Padding(2);
+            button9.Name = "button9";
+            button9.Size = new Size(606, 55);
+            button9.TabIndex = 3;
+            button9.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            button3.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button3.ForeColor = Color.White;
+            button3.Image = (Image)resources.GetObject("button3.Image");
+            button3.Location = new Point(16, 129);
+            button3.Margin = new Padding(2);
+            button3.Name = "button3";
+            button3.Size = new Size(606, 55);
+            button3.TabIndex = 2;
+            button3.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            button4.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button4.ForeColor = Color.White;
+            button4.Image = (Image)resources.GetObject("button4.Image");
+            button4.Location = new Point(16, 70);
+            button4.Margin = new Padding(2);
+            button4.Name = "button4";
+            button4.Size = new Size(606, 55);
+            button4.TabIndex = 1;
+            button4.UseVisualStyleBackColor = true;
+            // 
+            // button5
+            // 
+            button5.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button5.ForeColor = Color.White;
+            button5.Image = (Image)resources.GetObject("button5.Image");
+            button5.Location = new Point(16, 16);
+            button5.Margin = new Padding(2);
+            button5.Name = "button5";
+            button5.Size = new Size(606, 50);
+            button5.TabIndex = 0;
+            button5.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -267,6 +329,17 @@
             label2.Size = new Size(864, 100);
             label2.TabIndex = 3;
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(2, 2);
+            pictureBox1.Margin = new Padding(2);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(918, 500);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 8;
+            pictureBox1.TabStop = false;
+            // 
             // pictureBox2
             // 
             pictureBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -278,66 +351,6 @@
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.TabIndex = 10;
             pictureBox2.TabStop = false;
-            // 
-            // panel2
-            // 
-            panel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panel2.BackColor = Color.Transparent;
-            panel2.Controls.Add(button3);
-            panel2.Controls.Add(button4);
-            panel2.Controls.Add(button5);
-            panel2.Location = new Point(200, 86);
-            panel2.Margin = new Padding(2);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(483, 235);
-            panel2.TabIndex = 9;
-            // 
-            // button3
-            // 
-            button3.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button3.ForeColor = Color.White;
-            button3.Image = (Image)resources.GetObject("button3.Image");
-            button3.Location = new Point(146, 164);
-            button3.Margin = new Padding(2);
-            button3.Name = "button3";
-            button3.Size = new Size(249, 53);
-            button3.TabIndex = 2;
-            button3.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            button4.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button4.ForeColor = Color.White;
-            button4.Image = (Image)resources.GetObject("button4.Image");
-            button4.Location = new Point(146, 97);
-            button4.Margin = new Padding(2);
-            button4.Name = "button4";
-            button4.Size = new Size(249, 53);
-            button4.TabIndex = 1;
-            button4.UseVisualStyleBackColor = true;
-            // 
-            // button5
-            // 
-            button5.Font = new Font("SimSun-ExtG", 20F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button5.ForeColor = Color.White;
-            button5.Image = (Image)resources.GetObject("button5.Image");
-            button5.Location = new Point(146, 26);
-            button5.Margin = new Padding(2);
-            button5.Name = "button5";
-            button5.Size = new Size(249, 53);
-            button5.TabIndex = 0;
-            button5.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(2, 2);
-            pictureBox1.Margin = new Padding(2);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(918, 500);
-            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox1.TabIndex = 8;
-            pictureBox1.TabStop = false;
             // 
             // tabControl1
             // 
@@ -364,7 +377,7 @@
             tabPage4.Padding = new Padding(3);
             tabPage4.Size = new Size(922, 504);
             tabPage4.TabIndex = 3;
-            tabPage4.Text = "tabPage4";
+            tabPage4.Text = "Сохранение";
             // 
             // button8
             // 
@@ -409,11 +422,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             BackColor = Color.Black;
             ClientSize = new Size(930, 532);
             Controls.Add(tabControl1);
             KeyPreview = true;
             Margin = new Padding(2);
+            MaximizeBox = false;
             Name = "MainFormGame";
             Text = "Game";
             Shown += MainFormGame_Shown;
@@ -424,10 +439,10 @@
             tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxEndings).EndInit();
             tabPage1.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             panel2.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             ResumeLayout(false);
@@ -460,5 +475,6 @@
         private Button button8;
         private Button button7;
         private Button button6;
+        private Button button9;
     }
 }

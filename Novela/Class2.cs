@@ -39,7 +39,6 @@ namespace project.Choices
             AddChoice(3, new Choice("Согласиться помогать Фалексу.", "agree"));
             AddChoice(3, new Choice("Отказаться и действовать самостоятельно.", "endR"));
 
-            AddChoice(4, new Choice("Немедленно идти в церковь. Оставить тело в подвале.", "lineB"));
             AddChoice(4, new Choice("Немедленно отступать, оставив компонент.", "endD"));
 
             AddChoice(5, new Choice("Прорываться к ящику и забирать компонент.", "endG"));

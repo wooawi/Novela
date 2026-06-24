@@ -159,12 +159,13 @@ namespace project
             skipd.OnTypingComplete += () => { isWaitingForEnter = true; };
 
             skipTimer = new System.Windows.Forms.Timer();
-            skipTimer.Interval = 90;
+            skipTimer.Interval = 1;
             skipTimer.Tick += SkipTimer_Tick;
 
             button3.Click += (s, e) => HandleChoiceButton(2);
             button4.Click += (s, e) => HandleChoiceButton(1);
             button5.Click += (s, e) => HandleChoiceButton(0);
+            button9.Click += (s, e) => HandleChoiceButton(3);
 
             button6.Text = "💾 Слот 1";
             button7.Text = "💾 Слот 2";
@@ -420,18 +421,25 @@ namespace project
             button5.Text = choices.Count > 0 ? choices[0].Text : "";
             button4.Text = choices.Count > 1 ? choices[1].Text : "";
             button3.Text = choices.Count > 2 ? choices[2].Text : "";
+            button9.Text = choices.Count > 3 ? choices[3].Text : "";
 
             button5.Visible = choices.Count > 0;
             button4.Visible = choices.Count > 1;
             button3.Visible = choices.Count > 2;
+            button9.Visible = choices.Count > 3;
 
-            panel1.Visible = false;
-            label1.Visible = false;
-            pictureBox2.Visible = false;
+            panel1.Visible = true;
+            label1.Visible = true;
+            pictureBox2.Visible = true;
             panel2.Visible = true;
             button3.Enabled = true;
             button4.Enabled = true;
             button5.Enabled = true;
+            button9.Enabled = true;
+            button3.Visible = true;
+            button4.Visible = true;
+            button5.Visible = true;
+            button9.Visible = true;
         }
 
         private void HandleChoiceButton(int buttonIndex)
@@ -440,6 +448,7 @@ namespace project
             button3.Enabled = false;
             button4.Enabled = false;
             button5.Enabled = false;
+            button9.Enabled = false;
             if (pendingChoiceSceneIndex < 0) return;
 
             var choices = choiceManager.GetChoices(pendingChoiceSceneIndex);
@@ -453,12 +462,12 @@ namespace project
 
             panel2.Visible = false;
 
-            // 💾 save выбор
+            
             var saveData = SaveSystem.Load(activeSaveSlot) ?? new Save();
             saveData.ChoicesMade.Add(chosen.IdTyping);
             SaveSystem.SaveToSlot(saveData, activeSaveSlot);
 
-            // 🔥 1. мини-игра
+            
             if (chosen.IdTyping == "puzzle")
             {
                 StartMiniGame(1);
@@ -477,7 +486,7 @@ namespace project
                 return;
             }
 
-            // 💀 концовка
+            
             if (chosen.IdTyping == "endF")
             {
                 new SavingGame().ShowDialog();
@@ -485,7 +494,7 @@ namespace project
                 return;
             }
 
-            // 🔁 переходы
+            
             if (questionAnswerList.TryGetValue(chosen.IdTyping, out int answerList))
             {
                 GoToDialogList(answerList);
@@ -627,19 +636,37 @@ namespace project
             {
                 var result = miniGame.ShowDialog();
 
-                // после мини-игры возвращаемся
+                
                 if (result == DialogResult.OK)
                 {
                     ShowNextDialog();
                 }
             }
         }
-
         private void ShowNextDialog()
         {
             if (currentDialogIndex < currentDialogList.Count)
             {
                 var dialog = currentDialogList[currentDialogIndex];
+
+                // ПРОВЕРКА: если у текущей реплики есть ChoiceScene, показываем выборы ДО отображения текста
+                if (dialog.ChoiceScene >= 0)
+                {
+                    // Сохраняем текущую реплику в историю без текста (или с текстом)
+                    richTextBox1.Text += dialog.Name == "Автор"
+                        ? dialog.Text + "\n\n"
+                        : dialog.Name + ":  " + dialog.Text + "\n\n";
+
+                    // Обновляем спрайты и фон
+                    UpdateSpritesAndBackground(dialog);
+
+                    // Показываем выборы
+                    ShowChoices(dialog.ChoiceScene);
+                    currentDialogIndex++; // Переходим к следующей реплике
+                    return;
+                }
+
+                // Обычный диалог
                 richTextBox1.Text += dialog.Name == "Автор"
                     ? dialog.Text + "\n\n"
                     : dialog.Name + ":  " + dialog.Text + "\n\n";
@@ -684,15 +711,7 @@ namespace project
             }
             else
             {
-                if (returnListIndex >= 0)
-                {
-                    int rl = returnListIndex, ri = returnLineIndex;
-                    returnListIndex = -1;
-                    returnLineIndex = -1;
-                    GoToDialogList(rl, ri);
-                    return;
-                }
-
+                // Конец диалога
                 panel1.Visible = false;
                 label1.Visible = false;
                 pictureBox2.Visible = false;
@@ -703,8 +722,28 @@ namespace project
                 currentFullText = "";
 
                 SaveGame(activeSaveSlot);
-
                 this.Select();
+            }
+        }
+
+        // Вспомогательный метод для обновления спрайтов и фона
+        private void UpdateSpritesAndBackground(DialogueLine dialog)
+        {
+            if (dialog.indIm != currentSprites)
+            {
+                currentSprites = dialog.indIm;
+                if (dialog.indIm >= 0 && dialog.indIm < SpritesImages.Count)
+                    pictureBox2.Image = SpritesImages[dialog.indIm];
+            }
+
+            if (dialog.intImB != currentBackground)
+            {
+                currentBackground = dialog.intImB;
+                if (dialog.intImB >= 0 && dialog.intImB < BackgroundImages.Count)
+                {
+                    pictureBox1.Image = BackgroundImages[dialog.intImB];
+                    currentBackgroundImage = BackgroundImages[dialog.intImB];
+                }
             }
         }
 
