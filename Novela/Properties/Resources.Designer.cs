@@ -589,5 +589,30 @@ namespace project.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        internal static System.Drawing.Bitmap z1
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("z1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+        internal static System.Drawing.Bitmap z2
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("z2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+
+
+
+
+
     }
 }

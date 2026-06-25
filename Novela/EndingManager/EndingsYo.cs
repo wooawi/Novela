@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace project.EndingManager
 {
-    public class EndingsYo
+    public class EndingsYo   
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public bool IsUnlocked { get; private set; }
 
         public EndingsYo(string name) { Name = name; IsUnlocked = false; }
-
         public void Unlock() { IsUnlocked = true; }
     }
 }

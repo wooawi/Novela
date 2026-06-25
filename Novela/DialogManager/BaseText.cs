@@ -142,7 +142,7 @@ namespace project.DialogMnager
                 DialogueLine b12 = new DialogueLine("Роня", "Либо одноразовые, Либо мы что-то делаем не так.", 14, 0); dm.AddText(b12, 1);
                 DialogueLine b13 = new DialogueLine("Динара", "Или это не способ вернуться. А способ открыть что-то другое.", 27, 0); dm.AddText(b13, 1);
                 DialogueLine b14 = new DialogueLine("Автор", "Они положили часы обратно в шкатулку. Человек в углу пошевелился, \nоткрыл глаза — мутные, но живые.", 0, 0); dm.AddText(b14, 1);
-                DialogueLine b15 = new DialogueLine("Какой-то бедолага", "Не надо… \nНе крутите… без кода… сломаете…", 0, 0); dm.AddText(b15, 1);
+                DialogueLine b15 = new DialogueLine("Какой-то бедолага", "Не надо… \nНе крутите… без кода… сломаете…", 36, 0); dm.AddText(b15, 1);
                 DialogueLine b16 = new DialogueLine("Автор", "Он снова потерял сознание.", 0, 0); dm.AddText(b16, 1);
                 DialogueLine b17 = new DialogueLine("Эмма", "Код? Какой код?", 5, 0); dm.AddText(b17, 1);
                 DialogueLine b18 = new DialogueLine("Автор", "Она подошла к пациенту, проверила пульс — жив. \nНащупала в кармане его халата блокнот. Тот самый, который потом они найдут.", 0, 0); dm.AddText(b18, 1);
@@ -166,13 +166,18 @@ namespace project.DialogMnager
                 DialogueLine endF9 = new DialogueLine("Эмма", "Какого...", 0, 0); dm.AddText(endF9, 2);
                 DialogueLine endF10 = new DialogueLine("Автор", "Пальцы смыкаются. Хрящи хрустят. Она слышит этот звук прежде, чем чувствует боль. \nНоги подкашиваются, он приподнимает её над полом.\n В последнюю секунду она видит потолок, ржавую трубу — и шкатулку на столе. \nЧасы с крестом внутри. Стрелки дрогнули.", 0, 0); dm.AddText(endF10, 2);
                 DialogueLine endF11 = new DialogueLine("Автор", "Хруст. Темнота.", 0, 0); dm.AddText(endF11, 2);
+
+
+                DialogueLine op1 = new DialogueLine("Автор", "Они подошли к церкви. Дверь — массивная, дубовая, с коваными полосами. Динара дёрнула ручку — заперто.", 0, 5); dm.AddText(op1, 3);
+                DialogueLine op2 = new DialogueLine("Динара", "Чёрт, нужен ключ.", 24, 5); dm.AddText(op2, 3);
+                DialogueLine op3 = new DialogueLine("Автор", "Эмма огляделась. У крыльца — грязный половичок, над дверью висит старый фонарь, а возле бочки с дождевой водой лежит плоский булыжник.", 0, 5); dm.AddText(op3, 3);
+
                 
-                DialogueLine z1 = new DialogueLine("Автор", "Дверь со скрипом приоткрылась. Внутри пахло ладаном, плесенью и чем-то сладковатым.", 0, 5); dm.AddText(z1, 3);
                 DialogueLine z2 = new DialogueLine("Диана", "Заходим.", 10, 5); dm.AddText(z2, 3);
                 DialogueLine z3 = new DialogueLine("Автор", "Эмма сжала шкатулку с часами и шагнула через порог.\n Ключ щёлкнул в замке. Дверь со скрипом отворилась, \nвыпустив наружу клуб сырого, спёртого воздуха.", 0, 1); dm.AddText(z3, 3);
                 DialogueLine z4 = new DialogueLine("Диана", "Не торопись. Сначала свет.", 9, 1); dm.AddText(z4, 3);
                 DialogueLine z5 = new DialogueLine("Автор", "Она достала фонарь, включила. Луч упёрся в тёмный прямоугольник проёма, \nскользнул по каменному полу, по стенам, по облупившимся фрескам.", 0, 1); dm.AddText(z5, 3);
-                DialogueLine z6 = new DialogueLine("Роня", "Порог.", 17, 0); dm.AddText(z6, 3);
+                DialogueLine z6 = new DialogueLine("Роня", "Порог.", 17, 1); dm.AddText(z6, 3);
                 DialogueLine z7 = new DialogueLine("Автор", "Эмма шагнула первой. Подошва хрустнула по битому стеклу. За ней — остальные.\n Дверь сама захлопнулась за их спинами, будто кто-то придержал её, а потом отпустил.\n Внутри было тихо. Слишком тихо. Луч фонаря выхватывал из темноты ветхость: \nполоманные скамьи, сорванные с петель царские врата, клочья ткани на аналое. \nПахло ладаном — не свежим, а старым, въевшимся, смешанным с плесенью и ещё чем-то сладковатым, тревожным.", 0, 1); dm.AddText(z7, 3);
                 DialogueLine z8 = new DialogueLine("Динара", "Будто здесь кого-то хоронили.", 24, 1); dm.AddText(z8, 3);
                 DialogueLine z9 = new DialogueLine("Роня", "Или отпевали живых.", 16, 1); dm.AddText(z9, 3);
@@ -408,13 +413,13 @@ namespace project.DialogMnager
                 DialogueLine endD18 = new DialogueLine("Автор", "ЩЕЛЧОК.\nДверь открылась.\nУстановка.\nИзнутри ударил холодный воздух.", 0, 3); dm.AddText(endD18, 11);
                 DialogueLine endD19 = new DialogueLine("Эмма", "Формалин… и озон. Значит, тут было напряжение. Большое.", 3, 3); dm.AddText(endD19, 11);
                 DialogueLine endD20 = new DialogueLine("Автор", "Они переглянулись и начали спускаться.\nПодвал оказался не просто лабораторией. Это была замкнутая система. Толстые стены, гермодвери, генераторы, кабели. \nВ центре — кольцевая установка с креслами и фиксаторами.\nНа койках лежали тела. Разрезанные. Сшитые. Подключённые к датчикам. Над висками — электроды.\nНекоторые… дышали. Один повернул голову.", 0, 3); dm.AddText(endD20, 11);
-                DialogueLine endD21 = new DialogueLine("Какой-то бедолага", "…не… уходите…", 0, 3); dm.AddText(endD21, 11);
+                DialogueLine endD21 = new DialogueLine("Какой-то бедолага", "…не… уходите…", 37, 3); dm.AddText(endD21, 11);
                 DialogueLine endD22 = new DialogueLine("Автор", "Диана замерла.", 0, 3); dm.AddText(endD22, 11);
                 DialogueLine endD23 = new DialogueLine("Диана", "Он в сознании.", 9, 3); dm.AddText(endD23, 11);
                 DialogueLine endD24 = new DialogueLine("Эмма", "Частично. Их удерживают между состояниями.", 1, 3); dm.AddText(endD24, 11);
                 DialogueLine endD25 = new DialogueLine("Автор", "Она быстро осматривала установку.", 0, 3); dm.AddText(endD25, 11);
                 DialogueLine endD26 = new DialogueLine("Эмма", "Он не изучал тела. Он изучал сигналы.", 2, 3); dm.AddText(endD26, 11);
-                DialogueLine endD27 = new DialogueLine("Какой-то бедолага", "Нет. Я изучал пригодность.", 0, 3); dm.AddText(endD27, 11);
+                DialogueLine endD27 = new DialogueLine("Фалекс", "Нет. Я изучал пригодность.", 28, 3); dm.AddText(endD27, 11);
                 DialogueLine endD28 = new DialogueLine("Автор", "Они обернулись.\nФалекс стоял в проходе. Слишком спокойный. Слишком чистый. На руках — засохшая кровь.\nОн прошёл между койками, как по коридору.", 0, 3); dm.AddText(endD28, 11);
                 DialogueLine endD29 = new DialogueLine("Фалекс", "Вы всё ещё называете их людьми. Это ошибка.", 30, 3); dm.AddText(endD29, 11);
                 DialogueLine endD30 = new DialogueLine("Автор", "Он резко нажал пальцами в открытую рану одного из заражённых. \nТело дёрнулось. Без крика.", 0, 3); dm.AddText(endD30, 11);
@@ -522,33 +527,35 @@ namespace project.DialogMnager
                 DialogueLine endG27 = new DialogueLine("Автор", "Они сидели на траве, смотрели на чистое небо и не могли поверить. Всё закончилось. \nМиссия выполнена. Они спасли не только себя — спасли мир.", 0, 6); dm.AddText(endG27, 12);
                 DialogueLine endG28 = new DialogueLine("Диана", "С возвращением, команда.", 12, 6); dm.AddText(endG28, 12);
                 DialogueLine endG29 = new DialogueLine("Автор", "И они засмеялись. Все вместе.\n Эпилог.\n2067 год. Чернобыль процветает. Аварии не было. Вируса не существует. \nЛюди живут, работают, радуются жизни.\nЭмма, Диана, Роня, Динара и Фалекс стали лучшей командой \nИнститута времени. Их отправили в новую командировку — в другой век, на другую миссию.\nНо это уже совсем другая история.", 0, 6); dm.AddText(endG29, 12);
-                a88.ChoiceScene = 0;   // повернуть стрелки часов или отказаться
-                b26.ChoiceScene = 1;   // остаться с пациентом / идти всем
-                z45.ChoiceScene = 2;   // какой вопрос задать Фалексу
-                z49.ChoiceScene = 3;   // соглашаться помогать или нет
-                c19.ChoiceScene = 4;   // бежать или отстреливаться (склад)
+                a88.ChoiceScene = 0;
+                b26.ChoiceScene = 1;
+                lineB32.ChoiceScene = 1;
+                z45.ChoiceScene = 2;
+                z49.ChoiceScene = 3;
+                c19.ChoiceScene = 4;
+                endF7.MiniGameId = 2;
                 endD17.MiniGameId = 1;
             }
         }
-       
+
         public class DialogueLine
         {
             public string Name { get; set; }
             public string Text { get; set; }
             public int indIm { get; set; }
             public int intImB { get; set; }
-
             public int ChoiceScene { get; set; } = -1;
             public int MiniGameId { get; set; } = -1;
 
             public DialogueLine(string name, string text, int imageIndex, int backgroundIndex)
             {
-                Text = text;
                 Name = name;
+                Text = text;
                 indIm = imageIndex;
                 intImB = backgroundIndex;
             }
         }
+
         public class DialogueManager
         {
             private List<string> history = new List<string>();

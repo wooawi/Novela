@@ -7,6 +7,7 @@ using project.MiniGame3.Skip;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace project
@@ -16,7 +17,7 @@ namespace project
         System.Windows.Forms.Label lbl = new System.Windows.Forms.Label();
         private SkipDialogs skipd = new SkipDialogs();
         private BaseText bt = new BaseText();
-        private List<DialogueLine> currentDialogList;
+        private List<DialogueLine> currentDialogList = new();
         private int currentDialogIndex = 0;
         private int currentDialogListIndex = 0;
         private bool isDialogPlaying = false;
@@ -24,14 +25,14 @@ namespace project
         private string currentFullText = "";
         private int currentSprites = -1;
         private int currentBackground = -1;
-        private Image currentBackgroundImage;
+        private Image? currentBackgroundImage;
 
         private bool skipStepRequested = false;
         private bool isAutoSkipping = false;
         private System.Windows.Forms.Timer skipTimer;
 
-        private List<Image> SpritesImages;
-        private List<Image> BackgroundImages;
+        private List<Image> SpritesImages = new();
+        private List<Image> BackgroundImages = new();
 
         private ChoiceManager choiceManager = new ChoiceManager();
         private int pendingChoiceSceneIndex = -1;
@@ -41,19 +42,23 @@ namespace project
         private int activeSaveSlot = 1;
         private bool isChoiceActive = false;
 
+        private HashSet<string> askedQuestions = new();
+        private bool _pendingMiniGameAfterOp3 = false;
+        private Panel scrollPanel;
+
+        private int returnListIndex = -1;
+        private int returnLineIndex = -1;
 
         private readonly Dictionary<string, int> choiceTargetList = new()
         {
-            { "a1", 1 },     // повернула стрелки -> список 1 (b...)
-            { "b1", 10 },    // отказалась -> список 10 (lineB...)
-
-            { "puzzle", 3 }, // все идут в церковь -> список 3 (z...)
-
-            { "agree", 8 },  // согласиться помогать Фалексу -> список 8 (c...)
-            { "endR", 9 },   // отказаться -> список 9 (dEndR...)
-
-            { "lineB", 11 }, // -> список 11 (endD...)
-            { "endG", 12 },  // -> список 12 (endG...)
+            { "a1",     1  },
+            { "b1",     10 },
+            { "endF",   2  },
+            { "puzzle", 3  },
+            { "agree",  8  },
+            { "endR",   9  },
+            { "endD",   11 },
+            { "endG",   12 },
         };
 
         private readonly Dictionary<string, int> questionAnswerList = new()
@@ -64,44 +69,29 @@ namespace project
             { "q4", 7 },
         };
 
-        private int returnListIndex = -1;
-        private int returnLineIndex = -1;
+        private readonly Dictionary<int, string> endingsByListIndex = new()
+        {
+            { 2,  "Ложная надежда"    },
+            { 9,  "Геноцид"           },
+            { 11, "Мир во всем мире"  },
+            { 13, "Дьявол в деталях"  },
+            { 12, "Гости из будущего" },
+        };
 
+        // ── Авто-скип ──────────────────────────────────
         private void ToggleAutoSkip()
         {
             isAutoSkipping = !isAutoSkipping;
-
-            if (isAutoSkipping)
-            {
-                label4.Text = "||";
-                skipTimer.Start();
-            }
-            else
-            {
-                StopSkip();
-            }
+            if (isAutoSkipping) { label4.Text = "||"; skipTimer.Start(); }
+            else StopSkip();
         }
 
-        private void SkipTimer_Tick(object sender, EventArgs e)
+        private void SkipTimer_Tick(object? sender, EventArgs e)
         {
-            if (!isAutoSkipping)
-            {
-                skipTimer.Stop();
-                return;
-            }
-
-            if (panel2.Visible)
-            {
-                StopSkip();
-                return;
-            }
-
-            if (skipd.IsTyping())
-            {
-                skipd.Skip();
-                return;
-            }
-
+            if (!isAutoSkipping) { skipTimer.Stop(); return; }
+            if (panel2.Visible) { StopSkip(); return; }
+            if (_pendingMiniGameAfterOp3) { StopSkip(); return; }
+            if (skipd.IsTyping()) { skipd.Skip(); return; }
             skipStepRequested = true;
             ProcessSkipStep();
         }
@@ -117,22 +107,19 @@ namespace project
         {
             if (!skipStepRequested) return;
             skipStepRequested = false;
+            if (panel2.Visible) { StopSkip(); return; }
+            if (!isDialogPlaying) { StopSkip(); return; }
 
-            if (panel2.Visible)
+            if (currentDialogIndex > 0 && currentDialogIndex <= currentDialogList.Count)
             {
-                StopSkip();
-                return;
+                var justShown = currentDialogList[currentDialogIndex - 1];
+                if (justShown.MiniGameId >= 0) { StopSkip(); StartMiniGame(justShown.MiniGameId); return; }
+                if (justShown.ChoiceScene >= 0) { StopSkip(); ShowChoices(justShown.ChoiceScene); return; }
             }
-
-            if (!isDialogPlaying)
-            {
-                StopSkip();
-                return;
-            }
-
             ShowNextDialog();
         }
 
+        // ── Конструктор ────────────────────────────────
         public MainFormGame()
         {
             InitializeComponent();
@@ -148,12 +135,31 @@ namespace project
             pictureBox2.Visible = true;
             panel2.Visible = false;
 
+            scrollPanel = new Panel();
+            scrollPanel.Size = label2.Size;
+            scrollPanel.Location = label2.Location;
+            scrollPanel.Parent = label2.Parent;
+            scrollPanel.AutoScroll = true;
+            scrollPanel.BringToFront();
+            label2.Parent = scrollPanel;
+            label2.Location = new System.Drawing.Point(0, 0);
+            label2.AutoSize = true;
+            label2.MaximumSize = new System.Drawing.Size(scrollPanel.Width - 20, 0);
+
             label4.Click += (s, e) => ToggleAutoSkip();
 
             skipd.OnTextUpdated += (text) =>
             {
-                if (label2.InvokeRequired) label2.Invoke(new Action(() => label2.Text = text));
-                else label2.Text = text;
+                if (label2.InvokeRequired)
+                    label2.Invoke(new Action(() => {
+                        label2.Text = text;
+                        scrollPanel.AutoScrollPosition = new System.Drawing.Point(0, label2.Height);
+                    }));
+                else
+                {
+                    label2.Text = text;
+                    scrollPanel.AutoScrollPosition = new System.Drawing.Point(0, label2.Height);
+                }
             };
 
             skipd.OnTypingComplete += () => { isWaitingForEnter = true; };
@@ -172,12 +178,11 @@ namespace project
             button8.Text = "💾 Слот 3";
 
             UpdateSaveButtonsDisplay();
-
             timer1.Start();
             this.Select();
-            
         }
 
+        // ── Сохранения ─────────────────────────────────
         private void button6_Click(object sender, EventArgs e) => ToggleSaveLoad(1);
         private void button7_Click(object sender, EventArgs e) => ToggleSaveLoad(2);
         private void button8_Click(object sender, EventArgs e) => ToggleSaveLoad(3);
@@ -188,29 +193,16 @@ namespace project
             else QuickSave(slot);
         }
 
-        private void button6_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right) QuickLoad(1);
-        }
-        private void button7_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right) QuickLoad(2);
-        }
-        private void button8_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right) QuickLoad(3);
-        }
+        private void button6_MouseDown(object sender, MouseEventArgs e) { if (e.Button == MouseButtons.Right) QuickLoad(1); }
+        private void button7_MouseDown(object sender, MouseEventArgs e) { if (e.Button == MouseButtons.Right) QuickLoad(2); }
+        private void button8_MouseDown(object sender, MouseEventArgs e) { if (e.Button == MouseButtons.Right) QuickLoad(3); }
 
         private void MainFormGame_Shown(object sender, EventArgs e)
         {
             if (SaveSystem.Exists(1))
             {
-                var ask = MessageBox.Show(
-                    "Найдено сохранение. Продолжить?",
-                    "Загрузить игру",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
+                var ask = MessageBox.Show("Найдено сохранение. Продолжить?", "Загрузить игру",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (ask == DialogResult.Yes) { LoadGame(1); return; }
             }
             StartNewGame();
@@ -241,7 +233,6 @@ namespace project
                 UnlockedEndings = eu.GetUnlockedList(),
                 SaveTime = DateTime.Now
             };
-
             bool ok = SaveSystem.SaveToSlot(data, slot);
             if (ok) { activeSaveSlot = slot; ShowSaveToast(); }
             return ok;
@@ -292,11 +283,9 @@ namespace project
                 BackColor = Color.FromArgb(180, 0, 0, 0),
                 Font = new Font("Segoe UI", 12f, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(10, 10)
+                Location = new System.Drawing.Point(10, 10)
             };
-            tabPage1.Controls.Add(l);
-            l.BringToFront();
-
+            tabPage1.Controls.Add(l); l.BringToFront();
             var t = new System.Windows.Forms.Timer { Interval = 2000 };
             t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
@@ -304,28 +293,13 @@ namespace project
 
         private void QuickSave(int slot)
         {
-            if (SaveGame(slot))
-            {
-                activeSaveSlot = slot;
-                UpdateSaveButtonsDisplay();
-                ShowQuickSaveToast(slot);
-            }
+            if (SaveGame(slot)) { activeSaveSlot = slot; UpdateSaveButtonsDisplay(); ShowQuickSaveToast(slot); }
         }
 
         private void QuickLoad(int slot)
         {
-            if (SaveSystem.Exists(slot))
-            {
-                if (LoadGame(slot))
-                {
-                    UpdateSaveButtonsDisplay();
-                    ShowQuickLoadToast(slot);
-                }
-            }
-            else
-            {
-                MessageBox.Show($"Сохранение в слоте {slot} не существует!", "Ошибка загрузки");
-            }
+            if (SaveSystem.Exists(slot)) { if (LoadGame(slot)) { UpdateSaveButtonsDisplay(); ShowQuickLoadToast(slot); } }
+            else MessageBox.Show($"Сохранение в слоте {slot} не существует!", "Ошибка загрузки");
         }
 
         private void UpdateSaveButtonsDisplay()
@@ -344,11 +318,9 @@ namespace project
                 BackColor = Color.FromArgb(180, 0, 0, 0),
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(10, 40)
+                Location = new System.Drawing.Point(10, 40)
             };
-            tabPage1.Controls.Add(l);
-            l.BringToFront();
-
+            tabPage1.Controls.Add(l); l.BringToFront();
             var t = new System.Windows.Forms.Timer { Interval = 1500 };
             t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
@@ -363,16 +335,15 @@ namespace project
                 BackColor = Color.FromArgb(180, 0, 0, 0),
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 AutoSize = true,
-                Location = new Point(10, 40)
+                Location = new System.Drawing.Point(10, 40)
             };
-            tabPage1.Controls.Add(l);
-            l.BringToFront();
-
+            tabPage1.Controls.Add(l); l.BringToFront();
             var t = new System.Windows.Forms.Timer { Interval = 1500 };
             t.Tick += (s, e) => { t.Stop(); tabPage1.Controls.Remove(l); l.Dispose(); };
             t.Start();
         }
 
+        // ── Переходы ───────────────────────────────────
         public void GoToDialogList(int index)
         {
             currentDialogListIndex = index;
@@ -380,15 +351,12 @@ namespace project
             currentDialogIndex = 0;
             isDialogPlaying = true;
             isWaitingForEnter = false;
-
-            panel1.Visible = true;
-            label1.Visible = true;
-            label2.Visible = true;
-            pictureBox2.Visible = true;
+            panel1.Visible = true; label1.Visible = true;
+            label2.Visible = true; pictureBox2.Visible = true;
             panel2.Visible = false;
-
             ShowNextDialog();
         }
+
         private void GoToDialogList(int index, int startLineIndex)
         {
             currentDialogListIndex = index;
@@ -396,23 +364,24 @@ namespace project
             currentDialogIndex = Math.Max(startLineIndex, 0);
             isDialogPlaying = true;
             isWaitingForEnter = false;
-
-            panel1.Visible = true;
-            label1.Visible = true;
-            label2.Visible = true;
-            pictureBox2.Visible = true;
+            panel1.Visible = true; label1.Visible = true;
+            label2.Visible = true; pictureBox2.Visible = true;
             panel2.Visible = false;
-
             ShowNextDialog();
         }
 
+        // ── Выборы ─────────────────────────────────────
         public void ShowChoices(int sceneIndex)
         {
             isAutoSkipping = false;
             label4.Text = ">";
             panel2.Visible = true;
             panel2.BringToFront();
-            var choices = choiceManager.GetChoices(sceneIndex);
+
+            var choices = choiceManager.GetChoices(sceneIndex)
+                .Where(c => !askedQuestions.Contains(c.IdTyping))
+                .ToList();
+
             if (choices.Count == 0) return;
 
             pendingChoiceSceneIndex = sceneIndex;
@@ -428,18 +397,15 @@ namespace project
             button3.Visible = choices.Count > 2;
             button9.Visible = choices.Count > 3;
 
-            panel1.Visible = true;
-            label1.Visible = true;
-            pictureBox2.Visible = true;
-            panel2.Visible = true;
             button3.Enabled = true;
             button4.Enabled = true;
             button5.Enabled = true;
             button9.Enabled = true;
-            button3.Visible = true;
-            button4.Visible = true;
-            button5.Visible = true;
-            button9.Visible = true;
+
+            panel1.Visible = true;
+            label1.Visible = true;
+            pictureBox2.Visible = true;
+            panel2.Visible = true;
         }
 
         private void HandleChoiceButton(int buttonIndex)
@@ -451,7 +417,10 @@ namespace project
             button9.Enabled = false;
             if (pendingChoiceSceneIndex < 0) return;
 
-            var choices = choiceManager.GetChoices(pendingChoiceSceneIndex);
+            var choices = choiceManager.GetChoices(pendingChoiceSceneIndex)
+                .Where(c => !askedQuestions.Contains(c.IdTyping))
+                .ToList();
+
             if (buttonIndex >= choices.Count) return;
 
             var chosen = choices[buttonIndex];
@@ -459,44 +428,12 @@ namespace project
 
             isChoiceActive = false;
             pendingChoiceSceneIndex = -1;
-
             panel2.Visible = false;
 
-            
-            var saveData = SaveSystem.Load(activeSaveSlot) ?? new Save();
-            saveData.ChoicesMade.Add(chosen.IdTyping);
-            SaveSystem.SaveToSlot(saveData, activeSaveSlot);
-
-            
-            if (chosen.IdTyping == "puzzle")
-            {
-                StartMiniGame(1);
-                return;
-            }
-
-            if (chosen.IdTyping == "agree")
-            {
-                StartMiniGame(2);
-                return;
-            }
-
-            if (chosen.IdTyping == "lineB")
-            {
-                StartMiniGame(3);
-                return;
-            }
-
-            
-            if (chosen.IdTyping == "endF")
-            {
-                new SavingGame().ShowDialog();
-                GoToDialogList(2);
-                return;
-            }
-
-            
             if (questionAnswerList.TryGetValue(chosen.IdTyping, out int answerList))
             {
+                askedQuestions.Add(chosen.IdTyping);
+                returnListIndex = -2;  // ← ФЛАГ ВОЗВРАТА К ВОПРОСАМ
                 GoToDialogList(answerList);
                 return;
             }
@@ -507,8 +444,228 @@ namespace project
                 return;
             }
 
-            // fallback
             ShowNextDialog();
+        }
+
+        // ── Мини-игры ──────────────────────────────────
+        private void StartMiniGame(int id)
+        {
+            Form? miniGame = null;
+            switch (id)
+            {
+                case 1: miniGame = new ReactGame(); break;
+                case 2: miniGame = new SavingGame(); break;
+                case 3: miniGame = new ChoicesMiniGameForm(); break;
+            }
+            if (miniGame == null) return;
+
+            var result = miniGame.ShowDialog();
+
+            if (id == 1)
+            {
+                if (result == DialogResult.OK) GoToDialogList(11, 17);
+                else GoToDialogList(13, 0);
+                return;
+            }
+            if (id == 2) { GoToDialogList(2, 7); return; }
+            if (id == 3) { GoToDialogList(3, 3); return; }
+
+            if (result == DialogResult.OK) ShowNextDialog();
+        }
+
+        // ── Клавиши ────────────────────────────────────
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Enter) { HandleEnterPress(); return true; }
+            if (keyData == (Keys.Control | Keys.S)) { SaveGame(activeSaveSlot); return true; }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void MainFormGame_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                HandleEnterPress();
+                e.Handled = e.SuppressKeyPress = true;
+            }
+        }
+
+        private void HandleEnterPress()
+        {
+            if (skipd.IsTyping())
+            {
+                skipd.Skip();
+                currentFullText = skipd.GetFullText();
+                isWaitingForEnter = true;
+                return;
+            }
+
+            if (!isWaitingForEnter) return;
+            isWaitingForEnter = false;
+
+            if (_pendingMiniGameAfterOp3)
+            {
+                _pendingMiniGameAfterOp3 = false;
+                var mg = new ChoicesMiniGameForm();
+                mg.ShowDialog();
+                GoToDialogList(3, 3);
+                return;
+            }
+
+            if (currentDialogIndex > 0 && currentDialogIndex <= currentDialogList.Count)
+            {
+                var justShown = currentDialogList[currentDialogIndex - 1];
+                if (justShown.ChoiceScene >= 0) { ShowChoices(justShown.ChoiceScene); return; }
+                if (justShown.MiniGameId >= 0) { StartMiniGame(justShown.MiniGameId); return; }
+            }
+
+            ShowNextDialog();
+        }
+
+        // ── Основной диалог ────────────────────────────
+        private void ShowNextDialog()
+        {
+            if (currentDialogIndex < currentDialogList.Count)
+            {
+                var dialog = currentDialogList[currentDialogIndex];
+
+                if (dialog.ChoiceScene >= 0)
+                {
+                    richTextBox1.Text += dialog.Name == "Автор"
+                        ? dialog.Text + "\n\n"
+                        : dialog.Name + ":  " + dialog.Text + "\n\n";
+                    UpdateSpritesAndBackground(dialog);
+                    ShowChoices(dialog.ChoiceScene);
+                    currentDialogIndex++;
+                    return;
+                }
+
+                richTextBox1.Text += dialog.Name == "Автор"
+                    ? dialog.Text + "\n\n"
+                    : dialog.Name + ":  " + dialog.Text + "\n\n";
+
+                if (dialog.Name == "Автор") { pictureBox2.Visible = false; label1.Visible = false; }
+                else { pictureBox2.Visible = true; label1.Visible = true; label1.Text = dialog.Name; }
+
+                if (dialog.indIm != currentSprites)
+                {
+                    currentSprites = dialog.indIm;
+                    if (dialog.indIm >= 0 && dialog.indIm < SpritesImages.Count)
+                        pictureBox2.Image = SpritesImages[dialog.indIm];
+                }
+
+                if (dialog.intImB != currentBackground)
+                {
+                    currentBackground = dialog.intImB;
+                    if (dialog.intImB >= 0 && dialog.intImB < BackgroundImages.Count)
+                    {
+                        pictureBox1.Image = BackgroundImages[dialog.intImB];
+                        currentBackgroundImage = BackgroundImages[dialog.intImB];
+                    }
+                }
+
+                label2.Text = "";
+                currentFullText = "";
+                skipd.StartTyping(dialog.Text, 30);
+                currentDialogIndex++;
+                isWaitingForEnter = false;
+
+                // Флаг мини-игры после op3
+                if (currentDialogListIndex == 3 && currentDialogIndex == 3)
+                    _pendingMiniGameAfterOp3 = true;
+            }
+            else
+            {
+                // Возврат к вопросам после ответа Фалекса
+                if (returnListIndex == -2)
+                {
+                    returnListIndex = -1;
+                    if (askedQuestions.Count >= 4)
+                    {
+                        askedQuestions.Clear();
+                        const int Z46_INDEX = 45;
+                        GoToDialogList(3, bt.Z46Index);
+                    }
+                    else
+                    {
+                        ShowChoices(2);
+                    }
+                    return;
+                }
+
+                string endingMessage = "Игра окончена.";
+                if (endingsByListIndex.TryGetValue(currentDialogListIndex, out string endingName))
+                {
+                    richTextBox1.Text += $"\nПолучена концовка «{endingName}» и разблокирована в журнале.\n";
+                    eu.Unlocking(endingName);
+                    endingMessage = $"Игра окончена.\n\nВы получили концовку:\n«{endingName}»";
+                    endingsByListIndex.Remove(currentDialogListIndex);
+                }
+
+                panel1.Visible = false;
+                label1.Visible = false;
+                pictureBox2.Visible = false;
+                pictureBox1.Image = currentBackgroundImage;
+                isDialogPlaying = false;
+                isWaitingForEnter = false;
+                currentFullText = "";
+                SaveGame(activeSaveSlot);
+                this.Select();
+
+                var result = MessageBox.Show(
+                    endingMessage + "\n\nНачать игру сначала?",
+                    "Конец игры",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information);
+
+                if (result == DialogResult.Yes)
+                {
+                    RestartGame();
+                }
+            }
+        }
+
+        private void RestartGame()
+        {
+            askedQuestions.Clear();
+            _pendingMiniGameAfterOp3 = false;
+            currentSprites = -1;
+            currentBackground = -1;
+            currentBackgroundImage = null;
+            pictureBox2.Image = null;
+            pictureBox1.Image = null;
+            // eu НЕ сбрасывается — разблокированные концовки сохраняются!
+            richTextBox1.Text = "";
+            currentDialogListIndex = 0;
+            currentDialogList = bt.GetDialog(0);
+            currentDialogIndex = 0;
+            isDialogPlaying = true;
+            isWaitingForEnter = false;
+            currentFullText = "";
+            panel1.Visible = true;
+            label1.Visible = true;
+            pictureBox2.Visible = true;
+            panel2.Visible = false;
+            ShowNextDialog();
+        }
+
+        private void UpdateSpritesAndBackground(DialogueLine dialog)
+        {
+            if (dialog.indIm != currentSprites)
+            {
+                currentSprites = dialog.indIm;
+                if (dialog.indIm >= 0 && dialog.indIm < SpritesImages.Count)
+                    pictureBox2.Image = SpritesImages[dialog.indIm];
+            }
+            if (dialog.intImB != currentBackground)
+            {
+                currentBackground = dialog.intImB;
+                if (dialog.intImB >= 0 && dialog.intImB < BackgroundImages.Count)
+                {
+                    pictureBox1.Image = BackgroundImages[dialog.intImB];
+                    currentBackgroundImage = BackgroundImages[dialog.intImB];
+                }
+            }
         }
 
         private void LoadImagesToList()
@@ -549,7 +706,9 @@ namespace project
                 Properties.Resources.FalexSp4,
                 Properties.Resources.FalexSp5,
                 Properties.Resources.FalexSp6,
-                Properties.Resources.FalexSp7
+                Properties.Resources.FalexSp7,
+                Properties.Resources.z1,
+                Properties.Resources.z2
             };
 
             BackgroundImages = new List<Image>
@@ -565,188 +724,6 @@ namespace project
             };
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Enter) { HandleEnterPress(); return true; }
-            if (keyData == (Keys.Control | Keys.S)) { SaveGame(activeSaveSlot); return true; }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private void MainFormGame_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                HandleEnterPress();
-                e.Handled = e.SuppressKeyPress = true;
-            }
-        }
-
-        private void HandleEnterPress()
-        {
-            if (skipd.IsTyping())
-            {
-                skipd.Skip();
-                currentFullText = skipd.GetFullText();
-                isWaitingForEnter = true;
-                return;
-            }
-
-            if (!isWaitingForEnter) return;
-            isWaitingForEnter = false;
-
-            if (currentDialogIndex > 0 && currentDialogIndex <= currentDialogList.Count)
-            {
-                var justShown = currentDialogList[currentDialogIndex - 1];
-
-                if (justShown.ChoiceScene >= 0)
-                {
-                    ShowChoices(justShown.ChoiceScene);
-                    return;
-                }
-                if (justShown.MiniGameId >= 0)
-                {
-                    StartMiniGame(justShown.MiniGameId);
-                    return;
-                }
-            }
-
-            ShowNextDialog();
-        }
-
-        private void StartMiniGame(int id)
-        {
-            Form miniGame = null;
-
-            switch (id)
-            {
-                case 1:
-                    miniGame = new ReactGame();
-                    break;
-
-                case 2:
-                    miniGame = new SavingGame();
-                    break;
-
-                case 3:
-                    miniGame = new ChoicesMiniGameForm();
-                    break;
-            }
-
-            if (miniGame != null)
-            {
-                var result = miniGame.ShowDialog();
-
-                
-                if (result == DialogResult.OK)
-                {
-                    ShowNextDialog();
-                }
-            }
-        }
-        private void ShowNextDialog()
-        {
-            if (currentDialogIndex < currentDialogList.Count)
-            {
-                var dialog = currentDialogList[currentDialogIndex];
-
-                // ПРОВЕРКА: если у текущей реплики есть ChoiceScene, показываем выборы ДО отображения текста
-                if (dialog.ChoiceScene >= 0)
-                {
-                    // Сохраняем текущую реплику в историю без текста (или с текстом)
-                    richTextBox1.Text += dialog.Name == "Автор"
-                        ? dialog.Text + "\n\n"
-                        : dialog.Name + ":  " + dialog.Text + "\n\n";
-
-                    // Обновляем спрайты и фон
-                    UpdateSpritesAndBackground(dialog);
-
-                    // Показываем выборы
-                    ShowChoices(dialog.ChoiceScene);
-                    currentDialogIndex++; // Переходим к следующей реплике
-                    return;
-                }
-
-                // Обычный диалог
-                richTextBox1.Text += dialog.Name == "Автор"
-                    ? dialog.Text + "\n\n"
-                    : dialog.Name + ":  " + dialog.Text + "\n\n";
-
-                if (dialog.Name == "Автор")
-                {
-                    pictureBox2.Visible = false;
-                    label1.Visible = false;
-                }
-                else
-                {
-                    pictureBox2.Visible = true;
-                    label1.Visible = true;
-                    label1.Text = dialog.Name;
-                }
-
-                if (dialog.indIm != currentSprites)
-                {
-                    currentSprites = dialog.indIm;
-                    if (dialog.indIm >= 0 && dialog.indIm < SpritesImages.Count)
-                        pictureBox2.Image = SpritesImages[dialog.indIm];
-                }
-
-                if (dialog.intImB != currentBackground)
-                {
-                    currentBackground = dialog.intImB;
-                    if (dialog.intImB >= 0 && dialog.intImB < BackgroundImages.Count)
-                    {
-                        pictureBox1.Image = BackgroundImages[dialog.intImB];
-                        currentBackgroundImage = BackgroundImages[dialog.intImB];
-                    }
-                }
-
-                label2.Text = "";
-                currentFullText = "";
-                skipd.StartTyping(dialog.Text, 30);
-                currentDialogIndex++;
-                isWaitingForEnter = false;
-
-                if (currentDialogIndex % 10 == 0)
-                    SaveGame(activeSaveSlot);
-            }
-            else
-            {
-                // Конец диалога
-                panel1.Visible = false;
-                label1.Visible = false;
-                pictureBox2.Visible = false;
-                pictureBox1.Image = currentBackgroundImage;
-
-                isDialogPlaying = false;
-                isWaitingForEnter = false;
-                currentFullText = "";
-
-                SaveGame(activeSaveSlot);
-                this.Select();
-            }
-        }
-
-        // Вспомогательный метод для обновления спрайтов и фона
-        private void UpdateSpritesAndBackground(DialogueLine dialog)
-        {
-            if (dialog.indIm != currentSprites)
-            {
-                currentSprites = dialog.indIm;
-                if (dialog.indIm >= 0 && dialog.indIm < SpritesImages.Count)
-                    pictureBox2.Image = SpritesImages[dialog.indIm];
-            }
-
-            if (dialog.intImB != currentBackground)
-            {
-                currentBackground = dialog.intImB;
-                if (dialog.intImB >= 0 && dialog.intImB < BackgroundImages.Count)
-                {
-                    pictureBox1.Image = BackgroundImages[dialog.intImB];
-                    currentBackgroundImage = BackgroundImages[dialog.intImB];
-                }
-            }
-        }
-
         private void button1_Click(object sender, EventArgs e) => EndingsLabel2.Text = eu.ShowAll();
         private void button2_Click(object sender, EventArgs e) => EndingsLabel2.Text = eu.ShowAllUnlocked();
 
@@ -755,9 +732,5 @@ namespace project
             eu.Unlocking(a);
             SaveGame(activeSaveSlot);
         }
-
-        
-
-
     }
 }
